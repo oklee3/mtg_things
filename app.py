@@ -9,31 +9,16 @@ from functools import wraps
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', os.urandom(24))
-app.config['SESSION_COOKIE_SECURE'] = True
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+is_development = os.environ.get('FLASK_ENV') == 'development'
 
-# Initialize security extensions
-csrf = CSRFProtect(app)
-talisman = Talisman(
-    app,
-    force_https=True,
-    strict_transport_security=True,
-    session_cookie_secure=True,
-    content_security_policy={
-        'default-src': "'self'",
-        'img-src': "'self' data: https:",
-        'script-src': "'self' 'unsafe-inline'",
-        'style-src': "'self' 'unsafe-inline'"
-    }
-)
+# Basic app configuration
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', os.urandom(24))
 
 # Initialize rate limiter
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
+    default_limits=["1000 per day", "200 per hour"]
 )
 
 @app.route('/')
@@ -70,7 +55,7 @@ def db_handler(f):
     return wrapper
 
 @app.route('/api/cards', methods=['GET'])
-@limiter.limit("1000 per minute")
+@limiter.limit("60 per minute")
 @db_handler
 def get_cards(conn):
     """Get all cards with optional filtering"""
@@ -135,7 +120,7 @@ def get_cards(conn):
     return jsonify(cards)
 
 @app.route('/api/random-card-art', methods=['GET'])
-@limiter.limit("100 per minute")
+@limiter.limit("60 per minute")
 @db_handler
 def get_random_card(conn):
     """Get a random card for the guessing game"""
@@ -164,7 +149,7 @@ def get_random_card(conn):
     return jsonify(card)
 
 @app.route('/api/suggestions', methods=['GET'])
-@limiter.limit("1000 per minute")
+@limiter.limit("120 per minute")
 @db_handler
 def get_suggestions(conn):
     name = request.args.get('name', '')
@@ -180,6 +165,6 @@ if __name__ == '__main__':
     debug_mode = os.environ.get('FLASK_ENV') == 'development'
     app.run(
         host='0.0.0.0',
-        port=int(os.environ.get('PORT', 5000)),
+        port=int(os.environ.get('PORT', 8080)),
         debug=debug_mode
     )
