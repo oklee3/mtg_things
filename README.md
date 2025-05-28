@@ -1,4 +1,4 @@
-# mtg_card_fetcher
+# mtg_things
 
-an mtg database i designed and created - will be expanded to a site where users can
-search for cards, track collection, and more.
+search for mtg card images based on paramters  
+also contains a guessing game where users identify cards based on randomly positioned artwork
