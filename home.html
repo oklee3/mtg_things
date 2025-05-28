@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Card Database</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <h1 class="title">MTG Card Database</h1>
+                <small>by oklee</small>
+            </div>
+            <nav>
+                <a href="/art-game" class="nav-link">Art Guessing Game</a>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="search-container">
+        <div class="search-controls">
+            <div class="input-group">
+                <label for="cardName">Card Name:</label>
+                <input type="text" id="cardName" placeholder="Filter by card name" class="search-input">
+            </div>
+            <div class="input-group">
+                <label for="oracleText">Oracle Text:</label>
+                <input type="text" id="oracleText" placeholder="Filter by oracle text" class="search-input">
+            </div>
+            <div class="input-group">
+                <label for="cmc">CMC:</label>
+                <input type="text" id="cmc" placeholder="Filter by cmc" class="search-input">
+            </div>
+        </div>
+        <div class="input-group">
+            <label>Color:</label>
+            <div class="color-logic-selector">
+                <select id="colorLogic" class="color-logic-dropdown">
+                    <option value="any">Include Any</option>
+                    <option value="all">Include All</option>
+                    <option value="exact">Exactly These</option>
+                </select>
+            </div>
+            <div class="color-checkboxes">
+                <label><input type="checkbox" name="color" value="W"> White</label>
+                <label><input type="checkbox" name="color" value="U"> Blue</label>
+                <label><input type="checkbox" name="color" value="B"> Black</label>
+                <label><input type="checkbox" name="color" value="R"> Red</label>
+                <label><input type="checkbox" name="color" value="G"> Green</label>
+                <label><input type="checkbox" name="color" value="C"> Colorless</label>
+            </div>
+        </div>
+        <div class="search-button-container">
+            <button onclick="searchCards()" class="search-button">Search</button>
+        </div>
+    </div>
+
+    <div id="results" class="card-grid"></div>
+
+    <script src='/static/script.js'></script>
+</body>
+</html>

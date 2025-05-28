@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Card Art Guessing Game</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <h1 class="title">Guess the Card - Randomly Cropped Art</h1>
+                <small>by oklee</small>
+            </div>
+            <nav>
+                <a href="/" class="nav-link">Card Database</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="game-container">
+        <p class="game-description">Card arts will be shown with random pan and zoom. Try to guess the card (lowercase, full card name).</p>
+        
+        <div class="score-display">Score: <span id="score">0</span><span>/</span><span id="total">0</span></div>
+        
+        <div class="card-art-container">
+            <img id="cardArt" src="" alt="Card art to guess" class="card-art">
+        </div>
+
+        <form id="guessForm" class="guess-form" onsubmit="submitGuess(event)">
+            <div>
+                <input type="text" 
+                    id="guessInput" 
+                    placeholder="Enter card name..." 
+                    class="guess-input" 
+                    autocomplete="off">
+                <button type="submit" class="guess-button">Submit Guess</button>
+                <div class="result-box">
+                    <ul></ul>
+                </div>
+            </div>
+        </form>
+
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script src='/static/guess-art.js'></script>
+</body>
+</html>
