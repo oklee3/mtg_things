@@ -153,7 +153,23 @@ def get_random_card(conn):
 @db_handler
 def get_suggestions(conn):
     name = request.args.get('name', '')
-    query = "SELECT name FROM cards WHERE LOWER(name) LIKE LOWER(%s) ORDER BY name ASC LIMIT 7;"
+    query = """
+        "SELECT name FROM cards WHERE 
+        set_type IN ('core', 'expansion', 'masters', 'draft_innovation', 'commander', 'starter') 
+        AND name NOT LIKE 'A-%%' 
+        AND set_name NOT IN ('Mystery Booster 2')
+        AND (type_line LIKE 'Creature%'
+        OR type_line LIKE 'Legendary%'
+        OR type_line LIKE 'Artifact%'
+        OR type_line LIKE 'Enchantment%'
+        OR type_line LIKE 'Planeswalker%'
+        OR type_line LIKE 'Sorcery%'
+        OR type_line LIKE 'Land%'
+        OR type_line LIKE 'Instant%')
+        AND LOWER(name) LIKE LOWER(%s) 
+        ORDER BY name ASC LIMIT 7;
+    """
+
 
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(query, (f'{name}%',))

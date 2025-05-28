@@ -68,8 +68,13 @@ async function updateResults(query, resultList, input, resultBox) {
     /*
     Get the suggestions based on the current input text, fill in when suggestion is clicked.
     */
+    const name = query.trim();
+    if (name === '') {
+        resultBox.style.display = 'none';
+        resultList.innerHTML = '';
+        return;
+    }
 
-    const name = query;
     let url = '/api/suggestions?';
     if (name) url += `name=${encodeURIComponent(name)}&`;
     const response = await fetch(url);
