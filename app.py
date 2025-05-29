@@ -14,13 +14,6 @@ is_development = os.environ.get('FLASK_ENV') == 'development'
 # Basic app configuration
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', os.urandom(24))
 
-# Initialize rate limiter
-limiter = Limiter(
-    app=app,
-    key_func=get_remote_address,
-    default_limits=["1000 per day", "200 per hour"]
-)
-
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -55,7 +48,6 @@ def db_handler(f):
     return wrapper
 
 @app.route('/api/cards', methods=['GET'])
-@limiter.limit("60 per minute")
 @db_handler
 def get_cards(conn):
     """Get all cards with optional filtering"""
@@ -120,7 +112,6 @@ def get_cards(conn):
     return jsonify(cards)
 
 @app.route('/api/random-card-art', methods=['GET'])
-@limiter.limit("60 per minute")
 @db_handler
 def get_random_card(conn):
     """Get a random card for the guessing game"""
@@ -149,27 +140,25 @@ def get_random_card(conn):
     return jsonify(card)
 
 @app.route('/api/suggestions', methods=['GET'])
-@limiter.limit("120 per minute")
 @db_handler
 def get_suggestions(conn):
     name = request.args.get('name', '')
     query = """
-        "SELECT name FROM cards WHERE 
-        set_type IN ('core', 'expansion', 'masters', 'draft_innovation', 'commander', 'starter') 
+        SELECT name FROM cards 
+        WHERE set_type IN ('core', 'expansion', 'masters', 'draft_innovation', 'commander', 'starter') 
         AND name NOT LIKE 'A-%%' 
         AND set_name NOT IN ('Mystery Booster 2')
-        AND (type_line LIKE 'Creature%'
-        OR type_line LIKE 'Legendary%'
-        OR type_line LIKE 'Artifact%'
-        OR type_line LIKE 'Enchantment%'
-        OR type_line LIKE 'Planeswalker%'
-        OR type_line LIKE 'Sorcery%'
-        OR type_line LIKE 'Land%'
-        OR type_line LIKE 'Instant%')
+        AND (type_line LIKE 'Creature%%'
+        OR type_line LIKE 'Legendary%%'
+        OR type_line LIKE 'Artifact%%'
+        OR type_line LIKE 'Enchantment%%'
+        OR type_line LIKE 'Planeswalker%%'
+        OR type_line LIKE 'Sorcery%%'
+        OR type_line LIKE 'Land%%'
+        OR type_line LIKE 'Instant%%')
         AND LOWER(name) LIKE LOWER(%s) 
         ORDER BY name ASC LIMIT 7;
     """
-
 
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(query, (f'{name}%',))
@@ -177,10 +166,8 @@ def get_suggestions(conn):
     return jsonify(suggestions)
 
 if __name__ == '__main__':
-    # Only enable debug mode in development
-    debug_mode = os.environ.get('FLASK_ENV') == 'development'
     app.run(
         host='0.0.0.0',
         port=int(os.environ.get('PORT', 8080)),
-        debug=debug_mode
+        debug=True  # Always enable debug mode when running app.py directly
     )

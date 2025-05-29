@@ -74,7 +74,7 @@ async function updateResults(query, resultList, input, resultBox) {
         resultList.innerHTML = '';
         return;
     }
-
+    
     let url = '/api/suggestions?';
     if (name) url += `name=${encodeURIComponent(name)}&`;
     const response = await fetch(url);
