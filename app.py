@@ -22,6 +22,10 @@ def home():
 def game():
     return render_template('guess-art.html')
 
+@app.route('/mtgdle')
+def mtgdle():
+    return render_template('mtgdle.html')
+
 def get_db_connection():
     """Database connection factory"""
     return psycopg2.connect(
